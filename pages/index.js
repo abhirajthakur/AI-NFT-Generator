@@ -8,6 +8,7 @@ import { NFTStorage, File } from "nft.storage";
 import { Buffer } from "buffer";
 import axios from "axios";
 import { abi, nftAddress } from "@/constants";
+import { RotatingSquare } from "react-loader-spinner";
 
 export default function Home() {
   const [provider, setProvider] = useState(null);
@@ -18,6 +19,9 @@ export default function Home() {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
   const [url, setUrl] = useState(null);
+
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const loadBlockchainData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -38,19 +42,34 @@ export default function Home() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    console.log(e.target.value);
+    if (!account) {
+      window.alert("Wallet Not Connected");
+      return;
+    }
+    setLoading(true);
 
     const imageData = await generateImage(e);
-
     const url = await uploadImageToIPFS(imageData); // returns the tokenURI
+
+    // Mint the NFT
     await mintNFT(url);
 
-    console.log("Success!");
+    setUrl(url);
+    setLoading(false);
   };
 
   const generateImage = async (e) => {
     e.preventDefault();
-    console.log("Generating Image....");
+
+    if (name == "" || description == "") {
+      window.alert("Please provide both name and description");
+      return;
+    }
+    setImage(null);
+
+    setLoading(true);
+    setUrl(null);
+    setMessage("Generating Image");
 
     const URL =
       "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1";
@@ -70,8 +89,6 @@ export default function Home() {
       responseType: "arraybuffer",
     });
 
-    console.log(response);
-
     const type = response.headers["content-type"];
     const data = response.data;
 
@@ -79,11 +96,15 @@ export default function Home() {
     const image = `data:${type};base64,` + base64data;
     setImage(image);
 
+    setLoading(false);
+    setMessage("");
+
     return data;
   };
 
   const uploadImageToIPFS = async (imageData) => {
-    console.log("Uploading Image....");
+    setLoading(true);
+    setMessage("Uploading Image to IPFS");
 
     // Create instance of NFT.Storage
     const nftstorage = new NFTStorage({
@@ -98,19 +119,31 @@ export default function Home() {
 
     // Save the URL
     const url = `https://ipfs.io/ipfs/${ipnft}/metadata.json`;
-    setUrl(url);
+    setLoading(false);
+    setMessage("");
 
     return url;
   };
 
   const mintNFT = async (tokenURI) => {
-    console.log("Waiting for mint....");
+    setMessage("Minting NFT");
+    setLoading(true);
+    if (!account) {
+      window.alert("Wallet Not Connected");
+      return;
+    }
 
-    const signer = await provider.getSigner();
-    const tx = await nft.connect(signer).mint(tokenURI, {
-      value: ethers.utils.parseEther("1"),
-    });
-    await tx.wait();
+    try {
+      const signer = await provider.getSigner();
+      const tx = await nft.connect(signer).mint(tokenURI, {
+        value: ethers.utils.parseEther("0.5"),
+      });
+      await tx.wait();
+    } catch (err) {
+      console.log(err);
+    }
+    setMessage("");
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -138,6 +171,7 @@ export default function Home() {
 
       <div className={styles.main}>
         <Navigation account={account} setAccount={setAccount} />
+        <hr />
         <div className={styles.form}>
           <form>
             <input
@@ -161,16 +195,32 @@ export default function Home() {
           </form>
 
           <div className={styles.image}>
-            {image && (
-              <Image
-                src={image}
-                alt="AI generated image"
-                width={450}
-                height={450}
-              />
-            )}
+            <div>
+              {image && (
+                <Image
+                  src={image}
+                  alt="AI generated image"
+                  width={450}
+                  height={450}
+                />
+              )}
 
-            {url && (
+              {loading && (
+                <div>
+                  <RotatingSquare
+                    height="100"
+                    width="100"
+                    color="#15c2ee"
+                    ariaLabel="rotating-square-loading"
+                    strokeWidth="4"
+                    visible={true}
+                  />
+                  <p>{message}</p>
+                </div>
+              )}
+            </div>
+
+            {!loading && url && (
               <p>
                 View &nbsp;
                 <a href={url} target="_blank">

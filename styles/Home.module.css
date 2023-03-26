@@ -1,16 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Play:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Play:wght@400;700&display=swap");
 
 .main {
   background-color: rgba(117, 117, 117, 0.377);
-  overflow: hidden;
   min-height: 100vh;
+  font-family: "Play";
+  overflow: hidden;
 }
 
 .form {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 6rem;
+  padding: 10.5rem;
   max-height: 90vh;
 }
 
@@ -18,9 +19,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
 
-  margin: 0 25px;
+  margin: 0 3.5rem;
 }
 
 .form input[type="text"] {
@@ -29,15 +29,15 @@
   margin: 10px 5px;
   padding: 10px;
 
-  border: 1px solid #6c63ff;
+  border: 1px solid #0d98ba;
   border-radius: 4px;
 
   font-size: 1.1em;
 }
 
 .form input[type="submit"] {
-  background-color: #6c63ff;
-  color: white;
+  color: rgba(255, 255, 255, 0.89);
+  background-color: #15c2ee;
 
   width: 120px;
   height: 50px;
@@ -47,16 +47,15 @@
   border: none;
   border-radius: 4px;
 
-  font-family: "Play";
-  font-size: 1.1em;
-  font-weight: 400;
+  font-size: 1.3em;
+  font-weight: 500;
 
   cursor: pointer;
   transition: all 250ms ease;
 }
 
 .form input[type="submit"]:hover {
-  background-color: #4c46b6;
+  background-color: #0d98ba;
 }
 
 .nav {
@@ -67,13 +66,13 @@
 }
 
 .nav h1 {
-  font-family: "Courier New", Courier, monospace;
   font-size: 3vw;
 }
 
 .nav button {
   width: 175px;
-  background-color: #6c63ff;
+  background-color: #15c2ee;
+  color: rgba(255, 255, 255, 0.89);
   font-size: 1.15em;
   padding: 7px;
   border: none;
@@ -83,7 +82,7 @@
 
 .nav button:hover {
   cursor: pointer;
-  background-color: #4c46b6;
+  background-color: #0d98ba;
 }
 
 .image {
@@ -95,6 +94,16 @@
   padding: 4px;
 }
 
+.image > div,
+.image > div > div {
+  display: flex;
+  align-items: center;
+}
+
+.image a {
+  color: #15c2ee;
+}
+
 .image a:hover {
-  color: #6c63ff;
+  color: #0d98ba;
 }
