@@ -24,6 +24,9 @@ export default function Home() {
   const [message, setMessage] = useState("");
 
   const loadBlockchainData = async () => {
+    if (!window.ethereum) {
+      return;
+    }
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     setProvider(provider);
 
@@ -148,13 +151,17 @@ export default function Home() {
 
   useEffect(() => {
     loadBlockchainData();
-    ethereum.on("accountsChanged", async (accounts) => {
-      accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
+    try {
+      window.ethereum.on("accountsChanged", async (accounts) => {
+        accounts = await window.ethereum.request({
+          method: "eth_requestAccounts",
+        });
+        const account = ethers.utils.getAddress(accounts[0]);
+        setAccount(account);
       });
-      const account = ethers.utils.getAddress(accounts[0]);
-      setAccount(account);
-    });
+    } catch (err) {
+      console.log(err);
+    }
   }, [account]);
 
   return (

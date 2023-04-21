@@ -13,6 +13,8 @@ const Navigation = ({ account, setAccount }) => {
       } catch (err) {
         console.log(err);
       }
+    } else {
+      alert("Please install Metamask");
     }
   };
 
