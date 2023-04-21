@@ -14,7 +14,7 @@ const Navigation = ({ account, setAccount }) => {
         console.log(err);
       }
     } else {
-      alert("Please install Metamask");
+      alert("Please install Metamask or any other Ethereum wallet.");
     }
   };
 
